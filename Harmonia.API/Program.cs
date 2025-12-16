@@ -1,4 +1,5 @@
 using Harmonia.API.Context;
+using Harmonia.API.DTOs.Mappings;
 using Harmonia.API.Repositories;
 using Harmonia.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IInstrumentoRepository, InstrumentoRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddAutoMapper(typeof(DTOMappingProfile));
 
 var app = builder.Build();
 
