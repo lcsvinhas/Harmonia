@@ -34,7 +34,7 @@ public class CategoriaService : ICategoriaService
 
         if (categoria is null)
         {
-            throw new CategoriaException($"Categoria com id '{id}' não encontrada.");
+            throw new NotFoundException($"Categoria com id '{id}' não encontrada.");
         }
 
         return _mapper.Map<CategoriaResponseDTO>(categoria);
@@ -46,7 +46,7 @@ public class CategoriaService : ICategoriaService
 
         if (categoriaExistente is not null)
         {
-            throw new CategoriaException($"Categoria com nome '{request.Nome}' já existe.");
+            throw new BadRequestException($"Categoria com nome '{request.Nome}' já existe.");
         }
 
         var novaCategoria = _mapper.Map<Models.Categoria>(request);
@@ -62,7 +62,7 @@ public class CategoriaService : ICategoriaService
 
         if (categoriaExistente is null)
         {
-            throw new CategoriaException($"Categoria com id '{id}' não encontrada.");
+            throw new NotFoundException($"Categoria com id '{id}' não encontrada.");
         }
 
         _mapper.Map(request, categoriaExistente);
@@ -77,7 +77,7 @@ public class CategoriaService : ICategoriaService
 
         if (categoriaExistente is null)
         {
-            throw new CategoriaException($"Categoria com id '{id}' não encontrada.");
+            throw new NotFoundException($"Categoria com id '{id}' não encontrada.");
         }
 
         _unitOfWork.CategoriaRepository.Delete(categoriaExistente);

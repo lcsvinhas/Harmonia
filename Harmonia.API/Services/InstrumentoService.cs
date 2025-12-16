@@ -19,8 +19,8 @@ public class InstrumentoService : IInstrumentoService
 
     public async Task<IEnumerable<InstrumentoResponseDTO>> GetAllAsync()
     {
-        var intrumentos = await _unitOfWork.InstrumentoRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(intrumentos);
+        var instrumentos = await _unitOfWork.InstrumentoRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
     }
 
     public async Task<InstrumentoResponseDTO> GetByIdAsync(int id)
@@ -29,7 +29,7 @@ public class InstrumentoService : IInstrumentoService
 
         if (instrumento is null)
         {
-            throw new InstrumentoException($"Instrumento com id '{id}' não encontrado.");
+            throw new NotFoundException($"Instrumento com id '{id}' não encontrado.");
         }
 
         return _mapper.Map<InstrumentoResponseDTO>(instrumento);
@@ -45,7 +45,7 @@ public class InstrumentoService : IInstrumentoService
 
         if (instrumentoExistente is not null)
         {
-            throw new InstrumentoException($"Instrumento com nome '{request.Nome}' já existe nesta categoria.");
+            throw new BadRequestException($"Instrumento com nome '{request.Nome}' já existe nesta categoria.");
         }
 
         var novoInstrumento = _mapper.Map<Instrumento>(request);
@@ -61,7 +61,7 @@ public class InstrumentoService : IInstrumentoService
 
         if (instrumentoExistente is null)
         {
-            throw new InstrumentoException($"Instrumento com id '{id}' não encontrado.");
+            throw new NotFoundException($"Instrumento com id '{id}' não encontrado.");
         }
 
         _mapper.Map(request, instrumentoExistente);
@@ -77,7 +77,7 @@ public class InstrumentoService : IInstrumentoService
 
         if (instrumentoExistente is null)
         {
-            throw new InstrumentoException($"Instrumento com id '{id}' não encontrado.");
+            throw new NotFoundException($"Instrumento com id '{id}' não encontrado.");
         }
 
         _unitOfWork.InstrumentoRepository.Delete(instrumentoExistente);

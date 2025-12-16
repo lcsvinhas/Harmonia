@@ -15,7 +15,7 @@ namespace Harmonia.API.Controllers
             _service = service;
         }
 
-        [HttpGet("Intrumentos")]
+        [HttpGet("Instrumentos")]
         public async Task<IActionResult> GetAllWithProductsAsync() => Ok(await _service.GetAllWithProductsAsync());
 
         [HttpGet]

@@ -1,5 +1,6 @@
 using Harmonia.API.Context;
 using Harmonia.API.DTOs.Mappings;
+using Harmonia.API.Filters;
 using Harmonia.API.Repositories;
 using Harmonia.API.Services;
 using Harmonia.Repositories;
@@ -9,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExceptionFilter>();
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
