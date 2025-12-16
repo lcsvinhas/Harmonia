@@ -27,7 +27,7 @@ public class InstrumentoService : IInstrumentoService
     {
         var instrumento = await _unitOfWork.InstrumentoRepository.GetAsync(i => i.InstrumentoId == id);
 
-        if (instrumento == null)
+        if (instrumento is null)
         {
             throw new InstrumentoException($"Instrumento com id '{id}' não encontrado.");
         }

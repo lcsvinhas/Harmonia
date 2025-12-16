@@ -18,14 +18,14 @@ public class InstrumentoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync() => Ok(await _service.GetAllAsync());
 
-    [HttpGet("{id:int:min(1)}", Name = "GetByIdAsync")]
+    [HttpGet("{id:int:min(1)}", Name = "InstrumentoPorId")]
     public async Task<IActionResult> GetByIdAsync(int id) => Ok(await _service.GetByIdAsync(id));
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync(InstrumentoRequestDTO request)
     {
         var instrumento = await _service.CreateAsync(request);
-        return CreatedAtRoute("GetByIdAsync", new { id = instrumento.InstrumentoId }, instrumento);
+        return CreatedAtRoute("InstrumentoPorId", new { id = instrumento.InstrumentoId }, instrumento);
     }
 
     [HttpPut("{id:int:min(1)}")]
