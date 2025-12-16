@@ -28,5 +28,6 @@ public class InstrumentoRequestDTO
     public int? AnoFabricacao { get; set; }
 
     [Required(ErrorMessage = "CategoriaId é obrigatório.")]
+    [Range(1, int.MaxValue, ErrorMessage = "CategoriaId deve ser maior que 0.")]
     public int CategoriaId { get; set; }
 }

@@ -4,7 +4,7 @@ using Harmonia.Repositories;
 
 namespace Harmonia.API.Repositories;
 
-internal class InstrumentoRepository : Repository<Instrumento>, IInstrumentoRepository
+public class InstrumentoRepository : Repository<Instrumento>, IInstrumentoRepository
 {
     public InstrumentoRepository(AppDbContext context) : base(context)
     {
