@@ -5,8 +5,15 @@ using Harmonia.API.Repositories;
 using Harmonia.API.Services;
 using Harmonia.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 

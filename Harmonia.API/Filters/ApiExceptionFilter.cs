@@ -20,12 +20,32 @@ public class ApiExceptionFilter : IExceptionFilter
         switch (context.Exception)
         {
             case NotFoundException exception:
-                context.Result = new NotFoundObjectResult(exception.Message);
+                Log(context, LogLevel.Warning);
+                context.Result = new ObjectResult(new ProblemDetails
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    Title = exception.Message,
+                    Instance = context.HttpContext.Request.Path,
+                    Extensions = {
+                        ["method"] = context.HttpContext.Request.Method,
+                        ["traceId"] = context.HttpContext.TraceIdentifier
+                    }
+                });
                 context.ExceptionHandled = true;
                 break;
 
             case BadRequestException exception:
-                context.Result = new BadRequestObjectResult(exception.Message);
+                Log(context, LogLevel.Warning);
+                context.Result = new ObjectResult(new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = exception.Message,
+                    Instance = context.HttpContext.Request.Path,
+                    Extensions = {
+                        ["method"] = context.HttpContext.Request.Method,
+                        ["traceId"] = context.HttpContext.TraceIdentifier
+                    }
+                });
                 context.ExceptionHandled = true;
                 break;
 
@@ -37,38 +57,46 @@ public class ApiExceptionFilter : IExceptionFilter
 
     private void HandleUnexpectedException(ExceptionContext context)
     {
-        _logger.LogError(
-                context.Exception,
-                "{Method} {Path} | {Controller}.{Action} | IP: {IP}",
-                context.HttpContext.Request.Method,
-                context.HttpContext.Request.Path,
-                context.RouteData.Values["controller"],
-                context.RouteData.Values["action"],
-                context.HttpContext.Connection.RemoteIpAddress
-            );
+        Log(context, LogLevel.Error);
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            Title = "Ocorreu um erro interno no servidor.",
+            Detail = _env.IsDevelopment()
+                ? context.Exception.Message
+                : "Erro inesperado. Contate o suporte se o problema persistir.",
+            Instance = context.HttpContext.Request.Path,
+            Extensions = {
+                ["method"] = context.HttpContext.Request.Method,
+                ["traceId"] = context.HttpContext.TraceIdentifier
+            }
+        };
 
         if (_env.IsDevelopment())
         {
-            var resposta = new
-            {
-                erro = "Ocorreu um erro interno do servidor.",
-                detalhe = context.Exception.Message,
-                stackTrace = context.Exception.StackTrace
-            };
+            problemDetails.Extensions["stackTrace"] = context.Exception.StackTrace;
+        }
 
-            context.Result = new ObjectResult(resposta)
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
-        }
-        else
+        context.Result = new ObjectResult(problemDetails)
         {
-            context.Result = new ObjectResult("Ocorreu um erro interno do servidor.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
-        }
+            StatusCode = StatusCodes.Status500InternalServerError
+        };
 
         context.ExceptionHandled = true;
+    }
+
+    private void Log(ExceptionContext context, LogLevel level)
+    {
+        _logger.Log(
+            level,
+            context.Exception,
+            "{Method} {Path} | {Controller}.{Action} | IP: {IP}",
+            context.HttpContext.Request.Method,
+            context.HttpContext.Request.Path,
+            context.RouteData.Values["controller"],
+            context.RouteData.Values["action"],
+            context.HttpContext.Connection.RemoteIpAddress
+        );
     }
 }
