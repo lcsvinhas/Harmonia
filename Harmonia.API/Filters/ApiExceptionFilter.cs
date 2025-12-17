@@ -6,15 +6,60 @@ namespace Harmonia.API.Filters;
 
 public class ApiExceptionFilter : IExceptionFilter
 {
+    private readonly ILogger<ApiExceptionFilter> _logger;
+    private readonly IWebHostEnvironment _env;
+
+    public ApiExceptionFilter(ILogger<ApiExceptionFilter> logger, IWebHostEnvironment env)
+    {
+        _logger = logger;
+        _env = env;
+    }
+
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is NotFoundException)
+        switch (context.Exception)
         {
-            context.Result = new NotFoundObjectResult(context.Exception.Message);
+            case NotFoundException exception:
+                context.Result = new NotFoundObjectResult(exception.Message);
+                context.ExceptionHandled = true;
+                break;
+
+            case BadRequestException exception:
+                context.Result = new BadRequestObjectResult(exception.Message);
+                context.ExceptionHandled = true;
+                break;
+
+            default:
+                HandleUnexpectedException(context);
+                break;
         }
-        else if (context.Exception is BadRequestException)
+    }
+
+    private void HandleUnexpectedException(ExceptionContext context)
+    {
+        _logger.LogError(
+                context.Exception,
+                "{Method} {Path} | {Controller}.{Action} | IP: {IP}",
+                context.HttpContext.Request.Method,
+                context.HttpContext.Request.Path,
+                context.RouteData.Values["controller"],
+                context.RouteData.Values["action"],
+                context.HttpContext.Connection.RemoteIpAddress
+            );
+
+        if (_env.IsDevelopment())
         {
-            context.Result = new BadRequestObjectResult(context.Exception.Message);
+            var resposta = new
+            {
+                erro = "Ocorreu um erro interno do servidor.",
+                detalhe = context.Exception.Message,
+                stackTrace = context.Exception.StackTrace
+            };
+
+            context.Result = new ObjectResult(resposta)
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
         }
         else
         {
@@ -23,5 +68,7 @@ public class ApiExceptionFilter : IExceptionFilter
                 StatusCode = StatusCodes.Status500InternalServerError
             };
         }
+
+        context.ExceptionHandled = true;
     }
 }

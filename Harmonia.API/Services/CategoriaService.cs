@@ -2,6 +2,7 @@
 using Harmonia.API.DTOs;
 using Harmonia.API.Exceptions;
 using Harmonia.API.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Harmonia.API.Services;
 
