@@ -6,11 +6,32 @@ using Harmonia.API.Services;
 using Harmonia.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.PostgreSQL(
+        restrictedToMinimumLevel: LogEventLevel.Warning,
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        tableName: "Logs",
+        needAutoCreateTable: true,
+        columnOptions: new Dictionary<string, ColumnWriterBase>
+        {
+            ["trace_id"] = new SinglePropertyColumnWriter("TraceId"),
+            ["level"] = new LevelColumnWriter(),
+            ["exception"] = new ExceptionColumnWriter(),
+            ["method"] = new SinglePropertyColumnWriter("Method"),
+            ["path"] = new SinglePropertyColumnWriter("Path"),
+            ["controller"] = new SinglePropertyColumnWriter("Controller"),
+            ["action"] = new SinglePropertyColumnWriter("Action"),
+            ["ip"] = new SinglePropertyColumnWriter("IP"),
+            ["timestamp"] = new TimestampColumnWriter()
+        })
     .CreateLogger();
 
 builder.Host.UseSerilog();

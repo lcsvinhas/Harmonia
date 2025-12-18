@@ -91,12 +91,13 @@ public class ApiExceptionFilter : IExceptionFilter
         _logger.Log(
             level,
             context.Exception,
-            "{Method} {Path} | {Controller}.{Action} | IP: {IP}",
+            "{Method} {Path} | {Controller}.{Action} | IP: {IP} | TraceId: {TraceId}",
             context.HttpContext.Request.Method,
             context.HttpContext.Request.Path,
             context.RouteData.Values["controller"],
             context.RouteData.Values["action"],
-            context.HttpContext.Connection.RemoteIpAddress
+            context.HttpContext.Connection.RemoteIpAddress,
+            context.HttpContext.TraceIdentifier
         );
     }
 }
