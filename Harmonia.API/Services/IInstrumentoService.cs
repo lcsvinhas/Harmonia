@@ -6,6 +6,6 @@ namespace Harmonia.API.Services;
 
 public interface IInstrumentoService : IService<InstrumentoRequestDTO, InstrumentoResponseDTO>
 {
-    Task<IPagedList<InstrumentoResponseDTO>> GetByModeloPagedAsync(InstrumentoFiltroModelo instrumentoFiltroModelo);
-    Task<IPagedList<InstrumentoResponseDTO>> GetPagedAsync(InstrumentoParameters instrumentoParameters);
+    Task<IPagedList<InstrumentoResponseDTO>> GetByFilterPagedAsync(InstrumentoFiltro filtro);
+    Task<IPagedList<InstrumentoResponseDTO>> GetPagedAsync(InstrumentoParameters param);
 }

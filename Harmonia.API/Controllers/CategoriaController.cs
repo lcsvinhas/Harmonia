@@ -22,17 +22,17 @@ namespace Harmonia.API.Controllers
         public async Task<IActionResult> GetAllWithProductsAsync() => Ok(await _service.GetAllWithProductsAsync());
 
         [HttpGet("Paginacao")]
-        public async Task<IActionResult> GetPagedAsync([FromQuery] CategoriaParameters categoriaParameters)
+        public async Task<IActionResult> GetPagedAsync([FromQuery] CategoriaParameters param)
         {
-            var categoriasPaginadas = await _service.GetPagedAsync(categoriaParameters);
+            var categoriasPaginadas = await _service.GetPagedAsync(param);
             AddPaginationHeader(categoriasPaginadas);
             return Ok(categoriasPaginadas);
         }
 
-        [HttpGet("Filtro/Nome")]
-        public async Task<IActionResult> GetByNamePagedAsync([FromQuery] CategoriaFiltroNome categoriaFiltroNome)
+        [HttpGet("Filtro")]
+        public async Task<IActionResult> GetByFilterPagedAsync([FromQuery] CategoriaFiltro filtro)
         {
-            var categoriasPaginadas = await _service.GetByNamePagedAsync(categoriaFiltroNome);
+            var categoriasPaginadas = await _service.GetByFilterPagedAsync(filtro);
             AddPaginationHeader(categoriasPaginadas);
             return Ok(categoriasPaginadas);
         }

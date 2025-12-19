@@ -7,6 +7,6 @@ namespace Harmonia.API.Repositories;
 public interface ICategoriaRepository : IRepository<Categoria>
 {
     Task<IEnumerable<Categoria>> GetAllWithProductsAsync();
-    Task<IPagedList<Categoria>> GetPagedAsync(CategoriaParameters categoriaParameters);
-    Task<IPagedList<Categoria>> GetByNomePagedAsync(CategoriaFiltroNome categoriaFiltroNome);
+    Task<IPagedList<Categoria>> GetPagedAsync(CategoriaParameters param);
+    Task<IPagedList<Categoria>> GetByFilterPagedAsync(CategoriaFiltro filtro);
 }

@@ -30,16 +30,16 @@ public class CategoriaService : ICategoriaService
         return _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
     }
 
-    public async Task<IPagedList<CategoriaResponseDTO>> GetPagedAsync(CategoriaParameters categoriaParameters)
+    public async Task<IPagedList<CategoriaResponseDTO>> GetPagedAsync(CategoriaParameters param)
     {
-        var categorias = await _unitOfWork.CategoriaRepository.GetPagedAsync(categoriaParameters);
+        var categorias = await _unitOfWork.CategoriaRepository.GetPagedAsync(param);
         var responseDto = _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
         return new StaticPagedList<CategoriaResponseDTO>(responseDto, categorias.PageNumber, categorias.PageSize, categorias.TotalItemCount);
     }
 
-    public async Task<IPagedList<CategoriaResponseDTO>> GetByNamePagedAsync(CategoriaFiltroNome categoriaFiltroNome)
+    public async Task<IPagedList<CategoriaResponseDTO>> GetByFilterPagedAsync(CategoriaFiltro filtro)
     {
-        var categorias = await _unitOfWork.CategoriaRepository.GetByNomePagedAsync(categoriaFiltroNome);
+        var categorias = await _unitOfWork.CategoriaRepository.GetByFilterPagedAsync(filtro);
         var responseDto = _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
         return new StaticPagedList<CategoriaResponseDTO>(responseDto, categorias.PageNumber, categorias.PageSize, categorias.TotalItemCount);
     }

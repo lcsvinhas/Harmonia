@@ -25,16 +25,16 @@ public class InstrumentoService : IInstrumentoService
         return _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
     }
 
-    public async Task<IPagedList<InstrumentoResponseDTO>> GetPagedAsync(InstrumentoParameters instrumentoParameters)
+    public async Task<IPagedList<InstrumentoResponseDTO>> GetPagedAsync(InstrumentoParameters param)
     {
-        var instrumentos = await _unitOfWork.InstrumentoRepository.GetPagedAsync(instrumentoParameters);
+        var instrumentos = await _unitOfWork.InstrumentoRepository.GetPagedAsync(param);
         var responseDto = _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
         return new StaticPagedList<InstrumentoResponseDTO>(responseDto, instrumentos.PageNumber, instrumentos.PageSize, instrumentos.TotalItemCount);
     }
 
-    public async Task<IPagedList<InstrumentoResponseDTO>> GetByModeloPagedAsync(InstrumentoFiltroModelo instrumentoFiltroModelo)
+    public async Task<IPagedList<InstrumentoResponseDTO>> GetByFilterPagedAsync(InstrumentoFiltro filtro)
     {
-        var instrumentos = await _unitOfWork.InstrumentoRepository.GetByModeloPagedAsync(instrumentoFiltroModelo);
+        var instrumentos = await _unitOfWork.InstrumentoRepository.GetByFilterPagedAsync(filtro);
         var responseDto = _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
         return new StaticPagedList<InstrumentoResponseDTO>(responseDto, instrumentos.PageNumber, instrumentos.PageSize, instrumentos.TotalItemCount);
     }

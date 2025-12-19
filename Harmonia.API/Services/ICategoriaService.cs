@@ -7,6 +7,6 @@ namespace Harmonia.API.Services;
 public interface ICategoriaService : IService<CategoriaRequestDTO, CategoriaResponseDTO>
 {
     Task<IEnumerable<CategoriaResponseDTO>> GetAllWithProductsAsync();
-    Task<IPagedList<CategoriaResponseDTO>> GetPagedAsync(CategoriaParameters categoriaParameters);
-    Task<IPagedList<CategoriaResponseDTO>> GetByNamePagedAsync(CategoriaFiltroNome categoriaFiltroNome);
+    Task<IPagedList<CategoriaResponseDTO>> GetPagedAsync(CategoriaParameters param);
+    Task<IPagedList<CategoriaResponseDTO>> GetByFilterPagedAsync(CategoriaFiltro filtro);
 }

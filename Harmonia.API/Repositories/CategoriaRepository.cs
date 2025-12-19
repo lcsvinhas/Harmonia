@@ -21,20 +21,27 @@ public class CategoriaRepository : Repository<Categoria>, ICategoriaRepository
             .ToListAsync();
     }
 
-    public async Task<IPagedList<Categoria>> GetByNomePagedAsync(CategoriaFiltroNome categoriaFiltroNome)
+    public async Task<IPagedList<Categoria>> GetByFilterPagedAsync(CategoriaFiltro filtro)
     {
-        var categorias = await GetAllAsync();
-        if (!string.IsNullOrEmpty(categoriaFiltroNome.Nome))
+        var categorias = _context.Categorias
+            .Include(c => c.Instrumentos)
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(filtro.Nome))
         {
-            categorias = categorias.Where(c => c.Nome.Contains(categoriaFiltroNome.Nome));
+            categorias = categorias.Where(c => EF.Functions.ILike(c.Nome, $"%{filtro.Nome}%"));
         }
-        return await categorias.ToPagedListAsync(categoriaFiltroNome.NumeroDaPagina, categoriaFiltroNome.ItensPorPagina);
+
+        return await categorias.ToPagedListAsync(filtro.NumeroDaPagina, filtro.ItensPorPagina);
     }
 
-    public async Task<IPagedList<Categoria>> GetPagedAsync(CategoriaParameters categoriaParameters)
+    public async Task<IPagedList<Categoria>> GetPagedAsync(CategoriaParameters param)
     {
-        var categorias = await GetAllAsync();
-        var categoriasOrdenadas = categorias.OrderBy(c => c.CategoriaId).AsQueryable();
-        return await categoriasOrdenadas.ToPagedListAsync(categoriaParameters.NumeroDaPagina, categoriaParameters.ItensPorPagina);
+        return await _context.Categorias
+            .Include(c => c.Instrumentos)
+            .AsNoTracking()
+            .OrderBy(c => c.CategoriaId)
+            .ToPagedListAsync(param.NumeroDaPagina, param.ItensPorPagina);
     }
 }

@@ -19,17 +19,17 @@ public class InstrumentoController : ControllerBase
     }
 
     [HttpGet("Paginacao")]
-    public async Task<IActionResult> GetPagedAsync([FromQuery] InstrumentoParameters instrumentoParameters)
+    public async Task<IActionResult> GetPagedAsync([FromQuery] InstrumentoParameters param)
     {
-        var instrumentosPaginados = await _service.GetPagedAsync(instrumentoParameters);
+        var instrumentosPaginados = await _service.GetPagedAsync(param);
         AddPaginationHeader(instrumentosPaginados);
         return Ok(instrumentosPaginados);
     }
 
-    [HttpGet("Filtro/Modelo")]
-    public async Task<IActionResult> GetByModeloPagedAsync([FromQuery] InstrumentoFiltroModelo instrumentoFiltroModelo)
+    [HttpGet("Filtro")]
+    public async Task<IActionResult> GetByFilterPagedAsync([FromQuery] InstrumentoFiltro filtro)
     {
-        var instrumentosPaginados = await _service.GetByModeloPagedAsync(instrumentoFiltroModelo);
+        var instrumentosPaginados = await _service.GetByFilterPagedAsync(filtro);
         AddPaginationHeader(instrumentosPaginados);
         return Ok(instrumentosPaginados);
     }

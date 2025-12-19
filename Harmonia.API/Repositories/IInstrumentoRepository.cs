@@ -6,6 +6,6 @@ namespace Harmonia.API.Repositories;
 
 public interface IInstrumentoRepository : IRepository<Instrumento>
 {
-    Task<IPagedList<Instrumento>> GetPagedAsync(InstrumentoParameters instrumentoParameters);
-    Task<IPagedList<Instrumento>> GetByModeloPagedAsync(InstrumentoFiltroModelo instrumentoFiltroModelo);
+    Task<IPagedList<Instrumento>> GetPagedAsync(InstrumentoParameters param);
+    Task<IPagedList<Instrumento>> GetByFilterPagedAsync(InstrumentoFiltro filtro);
 }

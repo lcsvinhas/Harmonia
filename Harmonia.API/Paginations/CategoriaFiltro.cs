@@ -1,6 +1,6 @@
 ﻿namespace Harmonia.API.Paginations;
 
-public class CategoriaFiltroNome : PaginationParameters
+public class CategoriaFiltro : PaginationParameters
 {
     public string? Nome { get; set; }
 }
