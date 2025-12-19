@@ -1,6 +1,7 @@
 using Harmonia.API.Context;
 using Harmonia.API.DTOs.Mappings;
 using Harmonia.API.Filters;
+using Harmonia.API.RateLimitOptions;
 using Harmonia.API.Repositories;
 using Harmonia.API.Services;
 using Harmonia.Repositories;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.PostgreSQL;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +55,25 @@ builder.Services.AddCors(options =>
     });
 });
 
+var myOptions = new MyRateLimitOptions();
+
+builder.Configuration.GetSection(MyRateLimitOptions.MyRateLimit).Bind(myOptions);
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                AutoReplenishment = myOptions.AutoReplenishment,
+                PermitLimit = myOptions.PermitLimit,
+                QueueLimit = myOptions.QueueLimit,
+                Window = TimeSpan.FromSeconds(myOptions.Window)
+            }));
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -81,6 +102,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRateLimiter();
 
 app.UseCors();
 
