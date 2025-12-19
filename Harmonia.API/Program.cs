@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Harmonia.API.Context;
 using Harmonia.API.DTOs.Mappings;
 using Harmonia.API.Filters;
@@ -6,6 +7,7 @@ using Harmonia.API.Repositories;
 using Harmonia.API.Services;
 using Harmonia.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.PostgreSQL;
@@ -76,7 +78,35 @@ builder.Services.AddRateLimiter(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Harmonia",
+        Description = "Harmonia é uma API RESTful para cadastro, consulta e gerenciamento de instrumentos musicais.",
+        Contact = new OpenApiContact
+        {
+            Name = "Lucas Vinhas",
+            Email = "l.vinhas.lv@gmail.com",
+            Url = new Uri("https://www.linkedin.com/in/lucas-vinhas-/")
+        }
+    });
+});
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+                               new QueryStringApiVersionReader(),
+                               new UrlSegmentApiVersionReader());
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 var PostgresConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -98,7 +128,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Harmonia v1");
+    });
 }
 
 app.UseHttpsRedirection();

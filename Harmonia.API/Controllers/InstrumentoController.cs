@@ -1,4 +1,5 @@
-﻿using Harmonia.API.DTOs;
+﻿using Asp.Versioning;
+using Harmonia.API.DTOs;
 using Harmonia.API.Paginations;
 using Harmonia.API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using X.PagedList;
 
 namespace Harmonia.API.Controllers;
 
+[ApiVersion("1.0")]
 [Route("api/[controller]")]
 [ApiController]
 public class InstrumentoController : ControllerBase
