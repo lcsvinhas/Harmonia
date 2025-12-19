@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Harmonia.API.DTOs;
 using Harmonia.API.Exceptions;
+using Harmonia.API.Paginations;
 using Harmonia.API.Repositories;
+using X.PagedList;
 
 namespace Harmonia.API.Services;
 
@@ -26,6 +28,20 @@ public class CategoriaService : ICategoriaService
     {
         var categorias = await _unitOfWork.CategoriaRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
+    }
+
+    public async Task<IPagedList<CategoriaResponseDTO>> GetPagedAsync(CategoriaParameters categoriaParameters)
+    {
+        var categorias = await _unitOfWork.CategoriaRepository.GetPagedAsync(categoriaParameters);
+        var responseDto = _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
+        return new StaticPagedList<CategoriaResponseDTO>(responseDto, categorias.PageNumber, categorias.PageSize, categorias.TotalItemCount);
+    }
+
+    public async Task<IPagedList<CategoriaResponseDTO>> GetByNamePagedAsync(CategoriaFiltroNome categoriaFiltroNome)
+    {
+        var categorias = await _unitOfWork.CategoriaRepository.GetByNomePagedAsync(categoriaFiltroNome);
+        var responseDto = _mapper.Map<IEnumerable<CategoriaResponseDTO>>(categorias);
+        return new StaticPagedList<CategoriaResponseDTO>(responseDto, categorias.PageNumber, categorias.PageSize, categorias.TotalItemCount);
     }
 
     public async Task<CategoriaResponseDTO> GetByIdAsync(int id)

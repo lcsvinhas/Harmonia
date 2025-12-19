@@ -2,7 +2,9 @@
 using Harmonia.API.DTOs;
 using Harmonia.API.Exceptions;
 using Harmonia.API.Models;
+using Harmonia.API.Paginations;
 using Harmonia.API.Repositories;
+using X.PagedList;
 
 namespace Harmonia.API.Services;
 
@@ -21,6 +23,20 @@ public class InstrumentoService : IInstrumentoService
     {
         var instrumentos = await _unitOfWork.InstrumentoRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
+    }
+
+    public async Task<IPagedList<InstrumentoResponseDTO>> GetPagedAsync(InstrumentoParameters instrumentoParameters)
+    {
+        var instrumentos = await _unitOfWork.InstrumentoRepository.GetPagedAsync(instrumentoParameters);
+        var responseDto = _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
+        return new StaticPagedList<InstrumentoResponseDTO>(responseDto, instrumentos.PageNumber, instrumentos.PageSize, instrumentos.TotalItemCount);
+    }
+
+    public async Task<IPagedList<InstrumentoResponseDTO>> GetByModeloPagedAsync(InstrumentoFiltroModelo instrumentoFiltroModelo)
+    {
+        var instrumentos = await _unitOfWork.InstrumentoRepository.GetByModeloPagedAsync(instrumentoFiltroModelo);
+        var responseDto = _mapper.Map<IEnumerable<InstrumentoResponseDTO>>(instrumentos);
+        return new StaticPagedList<InstrumentoResponseDTO>(responseDto, instrumentos.PageNumber, instrumentos.PageSize, instrumentos.TotalItemCount);
     }
 
     public async Task<InstrumentoResponseDTO> GetByIdAsync(int id)

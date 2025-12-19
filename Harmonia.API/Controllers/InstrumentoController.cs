@@ -1,6 +1,9 @@
 ﻿using Harmonia.API.DTOs;
+using Harmonia.API.Paginations;
 using Harmonia.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using X.PagedList;
 
 namespace Harmonia.API.Controllers;
 
@@ -13,6 +16,22 @@ public class InstrumentoController : ControllerBase
     public InstrumentoController(IInstrumentoService service)
     {
         _service = service;
+    }
+
+    [HttpGet("Paginacao")]
+    public async Task<IActionResult> GetPagedAsync([FromQuery] InstrumentoParameters instrumentoParameters)
+    {
+        var instrumentosPaginados = await _service.GetPagedAsync(instrumentoParameters);
+        AddPaginationHeader(instrumentosPaginados);
+        return Ok(instrumentosPaginados);
+    }
+
+    [HttpGet("Filtro/Modelo")]
+    public async Task<IActionResult> GetByModeloPagedAsync([FromQuery] InstrumentoFiltroModelo instrumentoFiltroModelo)
+    {
+        var instrumentosPaginados = await _service.GetByModeloPagedAsync(instrumentoFiltroModelo);
+        AddPaginationHeader(instrumentosPaginados);
+        return Ok(instrumentosPaginados);
     }
 
     [HttpGet]
@@ -36,5 +55,20 @@ public class InstrumentoController : ControllerBase
     {
         await _service.DeleteAsync(id);
         return NoContent();
+    }
+
+    private void AddPaginationHeader(IPagedList pagedList)
+    {
+        var metadata = new
+        {
+            pagedList.PageNumber,
+            pagedList.PageSize,
+            pagedList.PageCount,
+            pagedList.TotalItemCount,
+            pagedList.HasNextPage,
+            pagedList.HasPreviousPage
+        };
+
+        Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(metadata));
     }
 }
