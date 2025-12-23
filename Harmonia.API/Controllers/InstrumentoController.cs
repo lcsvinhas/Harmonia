@@ -2,6 +2,7 @@
 using Harmonia.API.DTOs;
 using Harmonia.API.Paginations;
 using Harmonia.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using X.PagedList;
@@ -69,6 +70,7 @@ public class InstrumentoController : ControllerBase
     /// <summary>
     /// Cria um novo instrumento. 
     /// </summary>
+    [Authorize(Policy = "UserOnly")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -83,6 +85,7 @@ public class InstrumentoController : ControllerBase
     /// Atualiza um instrumento existente.
     /// </summary>
     /// <param name="id">ID do instrumento que será atualizado.</param>
+    [Authorize(Policy = "UserOnly")]
     [HttpPut("{id:int:min(1)}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -94,6 +97,7 @@ public class InstrumentoController : ControllerBase
     /// Exclui um instrumento pelo ID.
     /// </summary>
     /// <param name="id">ID do instrumento que será excluído.</param>
+    [Authorize(Policy = "AdminOnly")]
     [HttpDelete("{id:int:min(1)}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
